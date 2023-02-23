@@ -1,0 +1,16 @@
+{
+	"states": [
+		{
+			"id": 1,
+			"chance": 1.0,
+			"replacements": [
+				{
+					"source": "[^]*",
+					"target": "Example",
+					"modifiers": "",
+					"chance": 1.0
+				}
+			]
+		}
+	]
+}
