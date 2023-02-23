@@ -67,7 +67,7 @@ StatusText.Holders = StatusText.Holders || {};
 						for (let j = 0; j < replacements.length; j++) {
 							if (Math.random() < replacements[j]["chance"]) {
 								const source = new RegExp(replacements[j]["source"], replacements[j]["modifers"]);
-								const target = replacements[j]["target"].replace("\\", "\x1b");
+								const target = replacements[j]["target"].replace(/\\/g, "\x1b");
 								return text.replace(source, target);
 							}
 						}
