@@ -1,6 +1,6 @@
 /*:
  * @author 1d51
- * @version 1.0.2
+ * @version 1.0.3
  * @plugindesc Change dialog text based on actor states
  * @help
  * ============================================================================
@@ -73,7 +73,7 @@ StatusText.Holders = StatusText.Holders || {};
 							const chance = $.Helpers.define(replacements[j]["chance"], 1);
 							const actorId = $.Helpers.define(replacements[j]["actorId"], -1);
 							if (Math.random() <= chance && (actorId < 0 || $.Params.index === actorId)) {
-								const source = new RegExp(replacements[j]["source"], replacements[j]["modifers"]);
+								const source = new RegExp(replacements[j]["source"], replacements[j]["modifiers"]);
 								const target = replacements[j]["target"].replace(/\\/g, "\x1b").replace(/<br>/g, "\n");
 								return text.replace(source, target);
 							}
