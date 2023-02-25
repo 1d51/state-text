@@ -1,6 +1,6 @@
 /*:
  * @author 1d51
- * @version 1.0.3
+ * @version 1.1.0
  * @plugindesc Change dialog text based on actor states
  * @help
  * ============================================================================
@@ -66,22 +66,39 @@ StatusText.Holders = StatusText.Holders || {};
 			const states = $.readConfig()["states"];
 			
 			for (let i = 0; i < states.length; i++) {
-				if(actor.isStateAffected(states[i]["id"])){
-					if (Math.random() < states[i]["chance"]) {
-						const replacements = states[i]["replacements"];
-						for (let j = 0; j < replacements.length; j++) {
-							const chance = $.Helpers.define(replacements[j]["chance"], 1);
-							const actorId = $.Helpers.define(replacements[j]["actorId"], -1);
-							if (Math.random() <= chance && (actorId < 0 || $.Params.index === actorId)) {
-								const source = new RegExp(replacements[j]["source"], replacements[j]["modifiers"]);
-								const target = replacements[j]["target"].replace(/\\/g, "\x1b").replace(/<br>/g, "\n");
-								return text.replace(source, target);
+				const groups = states[i]["groups"];
+				const stateId = states[i]["id"];
+				
+				if(actor.isStateAffected(stateId)){					
+					for (let j = 0; j < groups.length; j++) {
+						const groupChance = $.Helpers.define(groups[j]["chance"], 1);
+						const actorIds = (groups[j]["actors"] || []).map(x => x["id"]);
+						const replacements = groups[j]["replacements"];
+						
+						if (actorIds.length > 0 && !actorIds.includes($.Params.index)) continue;
+						
+						if (Math.random() <= groupChance) {
+							for (let k = 0; k < replacements.length; k++) {
+								const replacementChance = $.Helpers.define(replacements[k]["chance"], 1);
+								const modifiers = replacements[k]["modifiers"];
+								const source = replacements[k]["source"];
+								const target = replacements[k]["target"];
+								
+								if (Math.random() <= replacementChance) {
+									const s = new RegExp(source, modifiers);
+									const t = target.replace(/\\/g, "\x1b").replace(/<br>/g, "\n");
+									text = text.replace(s, t);
+								}
 							}
+							
+							return text;
 						}
-					} else return text;
+					}
 				}
 			}
-		} return text;
+		}
+		
+		return text;
 	};
 	
 	$.readConfig = function() {
