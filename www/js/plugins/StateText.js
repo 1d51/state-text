@@ -1,6 +1,6 @@
 /*:
  * @author 1d51
- * @version 1.1.0
+ * @version 1.1.1
  * @plugindesc Change dialog text based on actor states
  * @help
  * ============================================================================
@@ -39,19 +39,17 @@ StatusText.Holders = StatusText.Holders || {};
     };
 	
 	$.Helpers.define = function(variable, value) {
-    if (typeof(variable) === "undefined") return value;
-    return variable;
-};
+		if (typeof(variable) === "undefined") return value;
+		return variable;
+	};
 	
 	/************************************************************************************/
 	
 	$.Params.root = $.Helpers.createPath("");
 	
 	$.insertFace = function(text) {
-		if ($.Params.skip) return text;
 		const actorMatch = text.match(/<\\N\[(\d+)\]>/i);
-		
-		if (actorMatch) {
+		if (actorMatch != null && actorMatch.length > 1) {
 			$.Params.index = parseInt(actorMatch[1]);
 			const faceMatch = text.match(/<\\AF\[(\d+)\]>/gi);
 			if (!faceMatch) return text.replace(/<\\N\[(\d+)\]>/gi, "<\\N[$1]>\\AF[$1]");
@@ -60,7 +58,6 @@ StatusText.Holders = StatusText.Holders || {};
 	};
 	
 	$.convertText = function(text) {
-		if ($.Params.skip) return text;
 		if ($.Params.index >= 0) {
 			const actor = $gameActors.actor($.Params.index);
 			const states = $.readConfig()["states"];
@@ -69,7 +66,7 @@ StatusText.Holders = StatusText.Holders || {};
 				const groups = states[i]["groups"];
 				const stateId = states[i]["id"];
 				
-				if(actor.isStateAffected(stateId)){					
+				if(actor.isStateAffected(stateId)){
 					for (let j = 0; j < groups.length; j++) {
 						const groupChance = $.Helpers.define(groups[j]["chance"], 1);
 						const actorIds = (groups[j]["actors"] || []).map(x => x["id"]);
@@ -114,13 +111,6 @@ StatusText.Holders = StatusText.Holders || {};
 	}
 	
 	/************************************************************************************/
-	
-	$.Holders.command101 = Game_Interpreter.prototype.command101;
-	Game_Interpreter.prototype.command101 = function() {
-		if (!$gameMessage.isBusy()) {
-			StatusText.Params.skip = !this._params[0] && !this._params[1];
-		} return $.Holders.command101.call(this);
-	};
 	
 	$.Holders.convertEscapeCharacters = Window_Message.prototype.convertEscapeCharacters;
 	Window_Message.prototype.convertEscapeCharacters = function(text) {
