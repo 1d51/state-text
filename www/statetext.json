@@ -1,7 +1,8 @@
 {
-	"states": [
+	"data": [
 		{
 			"id": 1,
+			"type": "state",
 			"groups": [
 				{
 					"chance": 1.0,
