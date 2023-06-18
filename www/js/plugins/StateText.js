@@ -1,6 +1,6 @@
 /*:
  * @author 1d51
- * @version 1.1.1
+ * @version 1.2.0
  * @plugindesc Change dialog text based on actor states
  * @help
  * ============================================================================
@@ -62,13 +62,19 @@ StatusText.Holders = StatusText.Holders || {};
     $.convertText = function (text) {
         if ($.Params.index >= 0) {
             const actor = $gameActors.actor($.Params.index);
-            const states = $.readConfig()["states"];
+            const data = $.readConfig()["data"];
 
-            for (let i = 0; i < states.length; i++) {
-                const groups = states[i]["groups"];
-                const stateId = states[i]["id"];
+            for (let i = 0; i < data.length; i++) {
+                const groups = data[i]["groups"];
+                const type = data[i]["type"] || "state";
+                const id = data[i]["id"];
 
-                if (actor.isStateAffected(stateId)) {
+                if (type === "class" && actor.isClass($dataClasses[id]) ||
+                    type === "skill" && actor.hasSkill(id) ||
+                    type === "armor" && actor.hasArmor($dataArmors[id]) ||
+                    type === "weapon" && actor.hasWeapon($dataArmors[id]) ||
+                    type === "state" && actor.isStateAffected(id)) {
+
                     for (let j = 0; j < groups.length; j++) {
                         const groupChance = $.Helpers.define(groups[j]["chance"], 1);
                         const actorIds = (groups[j]["actors"] || []).map(x => x["id"]);
