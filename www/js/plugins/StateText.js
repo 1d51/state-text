@@ -1,6 +1,6 @@
 /*:
  * @author 1d51
- * @version 1.2.1
+ * @version 2.0.0
  * @plugindesc Change dialog text based on actor states
  * @help
  * ============================================================================
@@ -16,6 +16,9 @@
  * is a requirement. All texts will be changed with the information provided in
  * the configuration file, according to the specified chance.
  */
+
+var Imported = Imported || {};
+Imported.StatusText = true;
 
 var StatusText = StatusText || {};
 
@@ -65,41 +68,40 @@ StatusText.Holders = StatusText.Holders || {};
             const data = $.readConfig()["data"];
 
             for (let i = 0; i < data.length; i++) {
-                const groups = data[i]["groups"];
-                const type = data[i]["type"] || "state";
-                const id = data[i]["id"];
+                const conditions = data[i]["conditions"];
+                const replacements = data[i]["replacements"];
 
-                if (type === "class" && actor.isClass($dataClasses[id]) ||
-                    type === "skill" && actor.hasSkill(id) ||
-                    type === "armor" && actor.hasArmor($dataArmors[id]) ||
-                    type === "weapon" && actor.hasWeapon($dataArmors[id]) ||
-                    type === "state" && actor.isStateAffected(id)) {
+                const allowed = conditions.every(condition => {
+                    const inclusive = condition["inclusive"] || true;
+                    const type = condition["type"] || "state";
+                    const id = condition["id"];
 
-                    for (let j = 0; j < groups.length; j++) {
-                        const groupChance = $.Helpers.define(groups[j]["chance"], 1);
-                        const actorIds = (groups[j]["actors"] || []).map(x => x["id"]);
-                        const replacements = groups[j]["replacements"];
+                    let response = false;
+                    if (type === "actor") response = id === actor._actorId;
+                    else if (type === "class") response = actor.isClass($dataClasses[id]);
+                    else if (type === "skill") response = actor.hasSkill(id);
+                    else if (type === "armor") response = actor.hasArmor($dataArmors[id]);
+                    else if (type === "weapon") response = actor.hasWeapon($dataArmors[id]);
+                    else if (type === "state") response = actor.isStateAffected(id);
+                    return inclusive ? response : !response;
+                });
 
-                        if (actorIds.length > 0 && !actorIds.includes($.Params.index)) continue;
+                if (!allowed) continue;
 
-                        if (Math.random() <= groupChance) {
-                            for (let k = 0; k < replacements.length; k++) {
-                                const replacementChance = $.Helpers.define(replacements[k]["chance"], 1);
-                                const modifiers = replacements[k]["modifiers"];
-                                const source = replacements[k]["source"];
-                                const target = replacements[k]["target"];
+                for (let j = 0; j < replacements.length; j++) {
+                    const chance = $.Helpers.define(replacements[j]["chance"], 1);
+                    const modifiers = replacements[j]["modifiers"];
+                    const source = replacements[j]["source"];
+                    const target = replacements[j]["target"];
 
-                                if (Math.random() <= replacementChance) {
-                                    const s = new RegExp(source, modifiers);
-                                    const t = target.replace(/\\/g, "\x1b").replace(/<br>/g, "\n");
-                                    text = text.replace(s, t);
-                                }
-                            }
-
-                            return text;
-                        }
+                    if (Math.random() <= chance) {
+                        const s = new RegExp(source, modifiers);
+                        const t = target.replace(/\\/g, "\x1b").replace(/<br>/g, "\n");
+                        text = text.replace(s, t);
                     }
                 }
+
+                return text;
             }
         }
 
