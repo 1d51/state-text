@@ -1,19 +1,19 @@
 {
 	"data": [
 		{
-			"id": 1,
-			"type": "state",
-			"groups": [
+			"conditions":[
 				{
-					"chance": 1.0,
-					"replacements": [
-						{
-							"source": "[^]*",
-							"target": "Example",
-							"modifiers": "",
-							"chance": 1.0
-						}
-					]
+					"inclusive": true,
+					"type": "state",
+					"id": 1
+			        }
+			],
+			"replacements": [
+				{
+					"source": "[^]*",
+					"target": "Example",
+					"modifiers": "",
+					"chance": 1.0
 				}
 			]
 		}
