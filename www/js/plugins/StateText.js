@@ -1,6 +1,6 @@
 /*:
  * @author 1d51
- * @version 1.2.0
+ * @version 1.2.1
  * @plugindesc Change dialog text based on actor states
  * @help
  * ============================================================================
@@ -113,7 +113,7 @@ StatusText.Holders = StatusText.Holders || {};
             return JSON.parse(file);
         } else {
             return {
-                "states": []
+                "data": []
             };
         }
     }
