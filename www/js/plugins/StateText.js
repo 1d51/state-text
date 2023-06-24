@@ -74,10 +74,12 @@ StatusText.Holders = StatusText.Holders || {};
                 const allowed = conditions.every(condition => {
                     const inclusive = condition["inclusive"] || true;
                     const type = condition["type"] || "state";
+                    const value = condition["value"];
                     const id = condition["id"];
 
                     let response = false;
                     if (type === "actor") response = id === actor._actorId;
+                    else if (type === "random") response = Math.random() <= value;
                     else if (type === "class") response = actor.isClass($dataClasses[id]);
                     else if (type === "skill") response = actor.hasSkill(id);
                     else if (type === "armor") response = actor.hasArmor($dataArmors[id]);
