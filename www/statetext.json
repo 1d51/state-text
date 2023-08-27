@@ -1,12 +1,13 @@
 {
 	"data": [
 		{
+			"priority": 0,
 			"conditions":[
 				{
 					"inclusive": true,
 					"type": "state",
 					"id": 1
-			        }
+				}
 			],
 			"replacements": [
 				{
