@@ -1,6 +1,6 @@
 /*:
  * @author 1d51
- * @version 2.0.1
+ * @version 2.0.2
  * @plugindesc Change dialog text based on actor states
  * @help
  * ============================================================================
@@ -65,17 +65,17 @@ StatusText.Holders = StatusText.Holders || {};
     $.convertText = function (text) {
         if ($.Params.index >= 0) {
             const actor = $gameActors.actor($.Params.index);
-            const data = $.readConfig()["data"];
+            const inputs = $.readConfig()["inputs"];
 
-            data.sort((a, b) => {
+            inputs.sort((a, b) => {
                 if (a["priority"] == null) return 1;
                 if (b["priority"] == null) return -1;
                 return a["priority"] - b["priority"];
             });
 
-            for (let i = 0; i < data.length; i++) {
-                const conditions = data[i]["conditions"];
-                const replacements = data[i]["replacements"];
+            for (let i = 0; i < inputs.length; i++) {
+                const conditions = inputs[i]["conditions"];
+                const replacements = inputs[i]["replacements"];
 
                 const allowed = conditions.every(condition => {
                     const inclusive = condition["inclusive"] || true;
@@ -123,7 +123,7 @@ StatusText.Holders = StatusText.Holders || {};
             return JSON.parse(file);
         } else {
             return {
-                "data": []
+                "inputs": []
             };
         }
     }
