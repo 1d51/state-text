@@ -1,6 +1,6 @@
 /*:
  * @author 1d51
- * @version 2.0.4
+ * @version 2.0.5
  * @plugindesc Change dialog text based on actor states
  * @help
  * ============================================================================
@@ -83,7 +83,8 @@ StatusText.Holders = StatusText.Holders || {};
                 const replacements = inputs[i]["replacements"];
 
                 const allowed = conditions.every(condition => {
-                    const inclusive = condition["inclusive"] || true;
+                    let inclusive = condition["inclusive"];
+                    if (inclusive == null) inclusive = true;
                     const type = condition["type"] || "state";
                     const value = condition["value"];
                     const id = condition["id"];
